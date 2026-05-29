@@ -1,0 +1,13 @@
+name = "sc36-auth-api"
+main = "src/index.js"
+compatibility_date = "2026-05-01"
+
+[vars]
+ALLOWED_ORIGIN = "https://juhltv.github.io"
+ADMIN_USERNAME = "texer"
+TOKEN_TTL_SECONDS = "43200"
+
+# Set secrets via CLI, never commit real values:
+# wrangler secret put ADMIN_PASSWORD_HASH
+# wrangler secret put AUTH_JWT_SECRET
+# wrangler secret put AUTH_PEPPER

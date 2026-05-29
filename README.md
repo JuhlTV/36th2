@@ -65,29 +65,42 @@ cd 36th2
 - Der Audio-/Atmosphaere-Modus startet browserbedingt erst nach Nutzerinteraktion.
 - Falls ein Embed in Google Sites nicht sofort sichtbar ist, Seite einmal neu laden und erneut veroeffentlichen.
 
-## Login-System (GitHub Pages)
+## Login-System (Admin via API)
 
-Das Projekt nutzt ein Session-basiertes Frontend-Login (LocalStorage, 12h Session-TTL). Alle Seiten ausser `login.html` sind geschuetzt und leiten ohne Session automatisch auf Login um.
+Die Inhaltsseiten sind oeffentlich lesbar.
+Nur `admin-auth.html` ist geschuetzt und nutzt serverseitige Authentifizierung ueber eine externe Login-API (Cloudflare Worker).
 
-### Demo-Zugaenge
+Konfiguration in `auth-config.json`:
+- `authApiEnabled: true`
+- `authApiBase: https://DEIN-WORKER.workers.dev`
 
-- `texer` / `republic36`
-- `arflead` / `recon36`
-- `technical` / `wrench36`
-- `medic` / `medica36`
-
-Hinweis: Auf statischem Hosting (GitHub Pages) ist das ein clientseitiger Zugriffsschutz, kein serverseitiges Zero-Trust-System.
+Damit liegen Admin-Zugangsdaten nicht mehr im Frontend.
 
 ## Auth Admin-Konsole
 
 Die Seite `admin-auth.html` ist standardmaessig nur fuer die Rolle `command` freigegeben.
 
 Funktionen:
-- Accounts visuell anlegen/loeschen
 - Rollen und Rollen-Labels verwalten
 - Seitenrechte pro Rolle in einer Matrix steuern
 - Lockout und Session-TTL ohne manuelles JSON-Edit anpassen
 - Konfiguration lokal aktivieren (LocalStorage Override) und als `auth-config.json` exportieren
+
+Hinweis zu Accounts:
+- Bei aktivierter API (`authApiEnabled: true`) erfolgt Account-Verwaltung serverseitig im Worker.
+- Die lokale Account-Sektion wird dann ausgeblendet.
+
+## Eigene Login-API (Cloudflare Worker)
+
+Das Worker-Projekt liegt in `auth-worker/`.
+
+Kurzablauf:
+1. `cd auth-worker && npm install`
+2. Secrets setzen (`ADMIN_PASSWORD_HASH`, `AUTH_JWT_SECRET`, `AUTH_PEPPER`)
+3. `npm run deploy`
+4. Worker-URL in `auth-config.json` unter `authApiBase` eintragen
+
+Details siehe `auth-worker/README.md`.
 
 Hinweis zum Deploy:
 - "Lokal speichern" in der Admin-Seite wirkt sofort im Browser dieses Geraets.
