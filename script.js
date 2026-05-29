@@ -1,3 +1,123 @@
+const AUTH_STORAGE_KEY = 'sc36.auth.session';
+const AUTH_TTL_MS = 1000 * 60 * 60 * 12;
+const AUTH_USERS = {
+  texer: { password: 'republic36', role: 'Senior Commander' },
+  arflead: { password: 'recon36', role: 'ARF Lead' },
+  technical: { password: 'wrench36', role: 'Technical Lead' },
+  medic: { password: 'medica36', role: 'Medic Lead' },
+};
+
+const currentPage = document.body.dataset.page || window.location.pathname.split('/').pop() || 'index.html';
+const isLoginPage = currentPage === 'login.html';
+
+const getAuthSession = () => {
+  try {
+    const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+    if (!raw) {
+      return null;
+    }
+    const session = JSON.parse(raw);
+    if (!session?.user || !session?.issuedAt) {
+      return null;
+    }
+    const expired = Date.now() - Number(session.issuedAt) > AUTH_TTL_MS;
+    return expired ? null : session;
+  } catch (_) {
+    return null;
+  }
+};
+
+const clearAuthSession = () => {
+  localStorage.removeItem(AUTH_STORAGE_KEY);
+};
+
+const saveAuthSession = (user, role) => {
+  localStorage.setItem(
+    AUTH_STORAGE_KEY,
+    JSON.stringify({
+      user,
+      role,
+      issuedAt: Date.now(),
+    })
+  );
+};
+
+const setupLoginPage = () => {
+  const form = document.querySelector('#login-form');
+  if (!form) {
+    return;
+  }
+
+  const userInput = document.querySelector('#login-user');
+  const passInput = document.querySelector('#login-pass');
+  const errorEl = document.querySelector('#login-error');
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const user = userInput?.value?.trim().toLowerCase() || '';
+    const pass = passInput?.value || '';
+    const account = AUTH_USERS[user];
+
+    if (!account || account.password !== pass) {
+      if (errorEl) {
+        errorEl.classList.remove('hidden');
+      }
+      return;
+    }
+
+    saveAuthSession(user, account.role);
+    const next = new URLSearchParams(window.location.search).get('next') || 'command-hub.html';
+    window.location.replace(next);
+  });
+};
+
+const mountAuthChip = (session) => {
+  if (!session || isLoginPage || document.querySelector('.auth-chip')) {
+    return;
+  }
+
+  const chip = document.createElement('div');
+  chip.className = 'auth-chip';
+  chip.innerHTML = `<span class="auth-chip-label">USER: ${session.user.toUpperCase()} | ${session.role}</span>`;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.textContent = 'LOGOUT';
+  btn.addEventListener('click', () => {
+    clearAuthSession();
+    window.location.replace('login.html');
+  });
+
+  chip.appendChild(btn);
+  document.body.appendChild(chip);
+};
+
+const enforceAuth = () => {
+  const session = getAuthSession();
+
+  if (isLoginPage) {
+    if (session) {
+      const next = new URLSearchParams(window.location.search).get('next') || 'command-hub.html';
+      window.location.replace(next);
+      return null;
+    }
+    setupLoginPage();
+    return null;
+  }
+
+  if (!session) {
+    clearAuthSession();
+    const nextParam = encodeURIComponent(currentPage || 'index.html');
+    window.location.replace(`login.html?next=${nextParam}`);
+    return null;
+  }
+
+  mountAuthChip(session);
+  return session;
+};
+
+enforceAuth();
+
 const revealItems = document.querySelectorAll('.reveal');
 
 if (revealItems.length > 0) {
@@ -23,7 +143,6 @@ if (revealItems.length > 0) {
   });
 }
 
-const currentPage = document.body.dataset.page;
 if (currentPage) {
   document.querySelectorAll('.hud-nav a[data-page]').forEach((link) => {
     if (link.dataset.page === currentPage) {

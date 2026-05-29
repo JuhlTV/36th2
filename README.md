@@ -62,3 +62,16 @@ cd 36th2
 
 - Der Audio-/Atmosphaere-Modus startet browserbedingt erst nach Nutzerinteraktion.
 - Falls ein Embed in Google Sites nicht sofort sichtbar ist, Seite einmal neu laden und erneut veroeffentlichen.
+
+## Login-System (GitHub Pages)
+
+Das Projekt nutzt ein Session-basiertes Frontend-Login (LocalStorage, 12h Session-TTL). Alle Seiten ausser `login.html` sind geschuetzt und leiten ohne Session automatisch auf Login um.
+
+### Demo-Zugaenge
+
+- `texer` / `republic36`
+- `arflead` / `recon36`
+- `technical` / `wrench36`
+- `medic` / `medica36`
+
+Hinweis: Auf statischem Hosting (GitHub Pages) ist das ein clientseitiger Zugriffsschutz, kein serverseitiges Zero-Trust-System.

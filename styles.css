@@ -436,6 +436,63 @@ textarea {
   box-shadow: 0 0 20px rgba(132, 243, 196, 0.28);
 }
 
+.auth-chip {
+  position: fixed;
+  top: 12px;
+  right: 12px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(109, 226, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(4, 17, 29, 0.9);
+  padding: 0.3rem 0.45rem 0.3rem 0.68rem;
+  box-shadow: 0 0 14px rgba(109, 226, 255, 0.2);
+}
+
+.auth-chip-label {
+  color: var(--text-soft);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.auth-chip button {
+  border: 1px solid rgba(255, 209, 102, 0.5);
+  border-radius: 999px;
+  background: rgba(33, 20, 7, 0.85);
+  color: #ffd166;
+  cursor: pointer;
+  padding: 0.2rem 0.6rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.68rem;
+}
+
+.login-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem 0;
+}
+
+.login-panel {
+  width: min(520px, 96%);
+}
+
+.login-panel h1 {
+  font-size: clamp(1.6rem, 7vw, 2.7rem);
+}
+
+.login-form {
+  margin-top: 0.8rem;
+}
+
+.login-error {
+  margin-top: 0.2rem;
+  color: #ff8f8f;
+  font-weight: 700;
+}
+
 .tag-list {
   list-style: none;
   padding: 0;
