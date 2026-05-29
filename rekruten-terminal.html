@@ -1,0 +1,86 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Rekruten-Terminal</title>
+    <meta name="description" content="HUD-Bewerbungsflow fuer neue Rekruten." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="rekruten-terminal.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Modul 11</p>
+        <h1>Rekruten-Terminal</h1>
+        <p class="hdr-sub">Bewerbungsflow mit Forum/Discord-Ausgabe</p>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Bewerbung erfassen</h2>
+        <form id="recruit-form" class="hud-form">
+          <label>Name / Callsign
+            <input type="text" id="rec-name" required />
+          </label>
+          <label>RP-Erfahrung
+            <select id="rec-experience" required>
+              <option value="">Bitte auswaehlen</option>
+              <option>Anfaenger</option>
+              <option>Fortgeschritten</option>
+              <option>Veteran</option>
+            </select>
+          </label>
+          <label>Gewuenschte Rolle
+            <select id="rec-role" required>
+              <option value="">Bitte auswaehlen</option>
+              <option>Infanterie</option>
+              <option>ARF</option>
+              <option>Technical</option>
+              <option>Medic</option>
+              <option>Fuehrungsperspektive</option>
+            </select>
+          </label>
+          <label>Verfuegbarkeit
+            <input type="text" id="rec-availability" placeholder="z. B. Mo-Do 19:00-22:00" required />
+          </label>
+          <label>Kurzvorstellung des Charakters
+            <textarea id="rec-story" rows="4" required></textarea>
+          </label>
+          <button class="module-link button-like" type="submit">Antrag generieren</button>
+        </form>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Ausgabe fuer Discord/Forum</h2>
+        <textarea id="recruit-output" rows="11" readonly placeholder="Der strukturierte Antrag erscheint hier."></textarea>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Rekruten-Terminal</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+

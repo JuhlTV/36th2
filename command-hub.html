@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Command-Hub</title>
+    <meta name="description" content="Zentrales Command-Hub mit Live-Kennzahlen und Modulzugriffen." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="command-hub.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Command Core</p>
+        <h1>36th Command-Hub</h1>
+        <p class="hdr-sub">Zentrale Einsatzkoordination und Live-Lagebild</p>
+        <div class="status-strip">
+          <span>COMMS: STABIL</span>
+          <span>TACTICAL NET: ONLINE</span>
+          <span id="hub-alert">ALERT: MONITORING</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Live-Kennzahlen</h2>
+        <div class="command-grid">
+          <article class="metric-card command-card">
+            <p class="metric-label">Aktive Missionen</p>
+            <p class="metric-value" id="hub-metric-active">--</p>
+            <p class="note" id="hub-note-critical">Kritische Lagen: --</p>
+          </article>
+          <article class="metric-card command-card">
+            <p class="metric-label">Geplante Missionen</p>
+            <p class="metric-value" id="hub-metric-planned">--</p>
+            <p class="note">Pipeline fuer kommende Einsaetze</p>
+          </article>
+          <article class="metric-card command-card">
+            <p class="metric-label">Abgeschlossene Missionen</p>
+            <p class="metric-value" id="hub-metric-complete">--</p>
+            <p class="note" id="hub-note-location">Letzter Debrief-Ort: --</p>
+          </article>
+          <article class="metric-card command-card">
+            <p class="metric-label">Debriefs im Archiv</p>
+            <p class="metric-value" id="hub-metric-debriefs">--</p>
+            <p class="note" id="hub-note-lastdate">Letzter Eintrag: --</p>
+          </article>
+        </div>
+        <p class="note">LETZTER COMMS-PING: <span id="hub-clock">--:--:--</span></p>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Taktische Schnellaktionen</h2>
+        <div class="module-grid">
+          <article class="module-card"><h3>Missionsboard öffnen</h3><p>Neue Operation planen oder aktive Lagen filtern.</p><a class="module-link" href="missionsboard.html">Zu Missionen</a></article>
+          <article class="module-card"><h3>Rekrutenauswertung</h3><p>Bewerbungen erfassen und strukturiert exportieren.</p><a class="module-link" href="rekruten-terminal.html">Zum Terminal</a></article>
+          <article class="module-card"><h3>Training prüfen</h3><p>Wochenplan und fehlende Fortbildungen nach Rang kontrollieren.</p><a class="module-link" href="dienstplan.html">Zum Dienstplan</a></article>
+          <article class="module-card"><h3>Debrief-Archiv prüfen</h3><p>Nachberichte filtern und Lessons Learned auswerten.</p><a class="module-link" href="nachberichte.html">Zu Nachberichten</a></article>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Operations-Lagekacheln</h2>
+        <div class="tactical-board">
+          <article class="tactical-tile">
+            <h3>Frontlinie Alpha</h3>
+            <p>Status: Stabil</p>
+            <p>Support: Technical + Medic aktiv</p>
+          </article>
+          <article class="tactical-tile">
+            <h3>Recon Sektor 7</h3>
+            <p>Status: Beobachtung</p>
+            <p>ARF meldet Droidenbewegung</p>
+          </article>
+          <article class="tactical-tile">
+            <h3>Command Queue</h3>
+            <p>3 Entscheidungen offen</p>
+            <p>Freigaben fuer Delta/Charlie priorisiert</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Command-Hub</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

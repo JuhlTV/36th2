@@ -1,0 +1,92 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Charakterakten</title>
+    <meta name="description" content="Charakterakten mit Spezialisierung und Entwicklung." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="charakterakten.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Modul 16</p>
+        <h1>Charakterakten-System</h1>
+        <p class="hdr-sub">Hintergrund, Spezialisierung, Einsatzweg und Entwicklung</p>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Filter</h2>
+        <div class="filter-row">
+          <label>Spezialisierung
+            <select id="char-filter-specialization">
+              <option value="all">Alle</option>
+              <option value="infanterie">Infanterie</option>
+              <option value="arf">ARF</option>
+              <option value="technical">Technical</option>
+              <option value="medic">Medic</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Aktive Akten</h2>
+        <div class="module-grid" id="character-grid">
+          <article class="module-card character-card" data-specialization="arf">
+            <h3>CT-4410 "Nox"</h3>
+            <p><strong>Hintergrund:</strong> Aufklaerungsschwerpunkt seit Kamino-Phase II</p>
+            <p><strong>Spezialisierung:</strong> ARF</p>
+            <p><strong>Einsatzweg:</strong> 14 Recon-Missionen, 3 Infiltrationen</p>
+            <p><strong>Entwicklung:</strong> Nach Beinverletzung auf Spotter-Rolle umgestellt</p>
+            <p><strong>Verknuepfung:</strong> Regelwerk Â§5, Tactical Recon</p>
+          </article>
+          <article class="module-card character-card" data-specialization="technical">
+            <h3>CT-6502 "Forge"</h3>
+            <p><strong>Hintergrund:</strong> Systemwartung und improvisierte Feldreparaturen</p>
+            <p><strong>Spezialisierung:</strong> Technical</p>
+            <p><strong>Einsatzweg:</strong> 9 Sabotage- und Relay-Missionen</p>
+            <p><strong>Entwicklung:</strong> Fuehrt seit letzter Kampagne Technical Cell Bravo</p>
+            <p><strong>Verknuepfung:</strong> Regelwerk Â§8, Heavy Weapons Support</p>
+          </article>
+          <article class="module-card character-card" data-specialization="medic">
+            <h3>CT-3397 "Pulse"</h3>
+            <p><strong>Hintergrund:</strong> Notfallmedizin und schnelle Evakuierung</p>
+            <p><strong>Spezialisierung:</strong> Medic</p>
+            <p><strong>Einsatzweg:</strong> 22 Rettungseinsaetze, 0 Ausfall in letzter Kampagne</p>
+            <p><strong>Entwicklung:</strong> Uebernahm Mentoring fuer neue Medic-Rekruten</p>
+            <p><strong>Verknuepfung:</strong> Regelwerk Â§7, Combat Survival</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Charakterakten</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+

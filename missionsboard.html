@@ -1,0 +1,118 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Einsatz-Planer</title>
+    <meta name="description" content="Interaktives Missionsboard des 36th Storm Corps." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="missionsboard.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Modul 10</p>
+        <h1>Einsatz-Planer</h1>
+        <p class="hdr-sub">Missionsboard mit taktischen Filtern</p>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Missionsfilter</h2>
+        <div class="filter-row">
+          <label>Status
+            <select id="mission-status">
+              <option value="all">Alle</option>
+              <option value="geplant">Geplant</option>
+              <option value="aktiv">Aktiv</option>
+              <option value="abgeschlossen">Abgeschlossen</option>
+            </select>
+          </label>
+          <label>Schwierigkeit
+            <select id="mission-difficulty">
+              <option value="all">Alle</option>
+              <option value="niedrig">Niedrig</option>
+              <option value="mittel">Mittel</option>
+              <option value="hoch">Hoch</option>
+              <option value="kritisch">Kritisch</option>
+            </select>
+          </label>
+          <label>Abteilung
+            <select id="mission-department">
+              <option value="all">Alle</option>
+              <option value="command">Command</option>
+              <option value="arf">ARF</option>
+              <option value="technical">Technical</option>
+              <option value="medic">Medic</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Missionen</h2>
+        <div class="module-grid" id="mission-grid">
+          <article class="module-card mission-card" data-status="geplant" data-difficulty="mittel" data-department="arf">
+            <h3>Operation Silent Comet</h3>
+            <p><strong>Status:</strong> Geplant</p>
+            <p><strong>Ziel:</strong> Feindliche Sensorstation kartieren</p>
+            <p><strong>Risiko:</strong> Patrouillen in unregelmaessigen Intervallen</p>
+            <p><strong>Rollen:</strong> ARF Scout, Comms, Spotter</p>
+            <p><strong>Zeitfenster:</strong> 21:00 - 22:30 GST</p>
+          </article>
+          <article class="module-card mission-card" data-status="aktiv" data-difficulty="hoch" data-department="technical">
+            <h3>Operation Iron Lantern</h3>
+            <p><strong>Status:</strong> Aktiv</p>
+            <p><strong>Ziel:</strong> Separatistische Energiezellen sabotieren</p>
+            <p><strong>Risiko:</strong> Hohe Droidendichte im Innenring</p>
+            <p><strong>Rollen:</strong> Technical Lead, Breacher, Medic Escort</p>
+            <p><strong>Zeitfenster:</strong> Laufend bis 23:15 GST</p>
+          </article>
+          <article class="module-card mission-card" data-status="abgeschlossen" data-difficulty="niedrig" data-department="medic">
+            <h3>Operation Lifeline Echo</h3>
+            <p><strong>Status:</strong> Abgeschlossen</p>
+            <p><strong>Ziel:</strong> Verwundete Einheit extrahieren</p>
+            <p><strong>Risiko:</strong> Gering, punktuelle Gegenwehr</p>
+            <p><strong>Rollen:</strong> Medic Team, Security Pair</p>
+            <p><strong>Zeitfenster:</strong> 19:30 - 20:05 GST</p>
+          </article>
+          <article class="module-card mission-card" data-status="geplant" data-difficulty="kritisch" data-department="command">
+            <h3>Operation Republic Dawn</h3>
+            <p><strong>Status:</strong> Geplant</p>
+            <p><strong>Ziel:</strong> Mehrstufige Frontlinien-Stabilisierung</p>
+            <p><strong>Risiko:</strong> Artillerie und Luftueberwachung</p>
+            <p><strong>Rollen:</strong> Command Staff, ARF, Heavy, Medic</p>
+            <p><strong>Zeitfenster:</strong> 20:00 - 23:45 GST</p>
+          </article>
+        </div>
+        <p id="mission-empty" class="note hidden">Keine Mission trifft auf die aktuellen Filter zu.</p>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Einsatz-Planer</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+

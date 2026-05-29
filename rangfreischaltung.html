@@ -1,0 +1,68 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Interaktive Rangfreischaltung</title>
+    <meta name="description" content="Klickbare Rangfreischaltung mit Fortbildungen und Voraussetzungen." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="rangfreischaltung.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Modul 14</p>
+        <h1>Interaktive Rangfreischaltung</h1>
+        <p class="hdr-sub">Dienstgrad klicken und Fortschritt anzeigen</p>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Rang waehlen</h2>
+        <div class="dept-controls" id="rank-controls">
+          <button class="dept-control is-active" data-rank="private" type="button">Private</button>
+          <button class="dept-control" data-rank="pfc" type="button">PFC</button>
+          <button class="dept-control" data-rank="specialist" type="button">Specialist</button>
+          <button class="dept-control" data-rank="corporal" type="button">Corporal</button>
+          <button class="dept-control" data-rank="sergeant" type="button">Sergeant</button>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Freischaltungsdaten</h2>
+        <article class="module-card">
+          <h3 id="rank-title">Private</h3>
+          <p><strong>Verfuegbare Fortbildungen:</strong> <span id="rank-trainings"></span></p>
+          <p><strong>Voraussetzungen:</strong> <span id="rank-reqs"></span></p>
+          <p><strong>Naechste Rangstufe:</strong> <span id="rank-next"></span></p>
+        </article>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Rangfreischaltung</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+

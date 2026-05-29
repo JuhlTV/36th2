@@ -1,0 +1,102 @@
+﻿<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Einsatznachbericht-Archiv</title>
+    <meta name="description" content="Debrief-Archiv mit Suchfilter und Template." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="nachberichte.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Modul 15</p>
+        <h1>Einsatznachbericht-Archiv</h1>
+        <p class="hdr-sub">Debriefs dokumentieren und durchsuchen</p>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="rekruten-terminal.html" data-page="rekruten-terminal.html">Rekruten-Terminal</a>
+      <a href="dienstplan.html" data-page="dienstplan.html">Dienstplan</a>
+      <a href="auszeichnungen.html" data-page="auszeichnungen.html">Auszeichnungen</a>
+      <a href="rangfreischaltung.html" data-page="rangfreischaltung.html">Rangfreischaltung</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="charakterakten.html" data-page="charakterakten.html">Charakterakten</a>
+    </nav>
+
+    <main class="hud-shell hud-main">
+      <section class="hud-panel reveal">
+        <h2>Archivfilter</h2>
+        <div class="filter-row">
+          <label>Datum
+            <input id="debrief-date" type="date" />
+          </label>
+          <label>Ort
+            <input id="debrief-location" type="text" placeholder="z. B. Ryloth" />
+          </label>
+          <label>Abteilung
+            <select id="debrief-department">
+              <option value="all">Alle</option>
+              <option value="command">Command</option>
+              <option value="arf">ARF</option>
+              <option value="technical">Technical</option>
+              <option value="medic">Medic</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Archiv</h2>
+        <div id="debrief-grid" class="module-grid">
+          <article class="module-card debrief-card" data-date="2026-05-21" data-location="ryloth" data-department="arf">
+            <h3>DBR-021 | Ryloth Extraction</h3>
+            <p><strong>Ziel:</strong> Eingeschlossene Einheit extrahieren</p>
+            <p><strong>Verlauf:</strong> Zweistufige Flankenbewegung, feindliche Sensoren umgangen</p>
+            <p><strong>Verluste:</strong> 1 schwer verletzt, keine KIA</p>
+            <p><strong>Lessons Learned:</strong> Comms-Handoff frueher vorbereiten</p>
+          </article>
+          <article class="module-card debrief-card" data-date="2026-05-24" data-location="christophsis" data-department="technical">
+            <h3>DBR-028 | Christophsis Relay</h3>
+            <p><strong>Ziel:</strong> Relay-Knoten sabotieren</p>
+            <p><strong>Verlauf:</strong> Technical Team sicherte Zugang, Medic Backup stabilisierte Vorhut</p>
+            <p><strong>Verluste:</strong> 2 leicht verletzt</p>
+            <p><strong>Lessons Learned:</strong> Ersatzenergiezellen fuer Jammer vorhalten</p>
+          </article>
+        </div>
+        <p id="debrief-empty" class="note hidden">Keine Nachberichte fuer den aktuellen Filter.</p>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Debrief-Template</h2>
+        <textarea rows="9" readonly>[Einsatznachbericht]
+ID:
+Datum:
+Ort:
+Abteilung:
+Ziel:
+Verlauf:
+Verluste:
+Lessons Learned:</textarea>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Nachberichte</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
