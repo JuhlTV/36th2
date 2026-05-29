@@ -982,6 +982,91 @@ const enforceAuth = async () => {
 
 enforceAuth();
 
+const normalizeModuleLayout = () => {
+  const skipPages = new Set(['login.html', 'admin-auth.html']);
+  if (skipPages.has(currentPage)) {
+    return;
+  }
+
+  const main = document.querySelector('main.hud-main');
+  if (!main) {
+    return;
+  }
+
+  const headerShell = document.querySelector('.hud-header .hud-shell');
+  if (headerShell && !headerShell.querySelector('.status-strip')) {
+    const title = (headerShell.querySelector('h1')?.textContent || 'Module').trim().toUpperCase();
+    const strip = document.createElement('div');
+    strip.className = 'status-strip';
+    strip.innerHTML = [
+      '<span>STATUS: ACTIVE</span>',
+      `<span>MODULE: ${title}</span>`,
+      '<span>SYNC: LIVE</span>',
+    ].join('');
+    headerShell.appendChild(strip);
+  }
+
+  const panels = Array.from(main.querySelectorAll(':scope > .hud-panel'));
+  if (panels.length === 0) {
+    return;
+  }
+
+  const getHeading = (panel) => panel.querySelector(':scope > h2');
+  const setHeading = (panel, text) => {
+    const heading = getHeading(panel);
+    if (heading) {
+      heading.textContent = text;
+    }
+  };
+
+  setHeading(panels[0], 'Intro-Header');
+
+  const kpiPanel =
+    panels.find((panel) => panel.querySelector('.metric-grid, .command-grid, .schedule-grid')) ||
+    (panels.length > 1 ? panels[1] : null);
+
+  if (kpiPanel) {
+    setHeading(kpiPanel, 'KPI-Row');
+  }
+
+  panels.forEach((panel) => {
+    if (panel === panels[0] || panel === kpiPanel) {
+      return;
+    }
+    const heading = getHeading(panel);
+    if (!heading) {
+      return;
+    }
+    const text = heading.textContent.trim();
+    if (text === 'Action-Footer' || text.startsWith('Main-Section:')) {
+      return;
+    }
+    heading.textContent = `Main-Section: ${text}`;
+  });
+
+  const hasActionFooter = panels.some((panel) => {
+    const headingText = getHeading(panel)?.textContent?.trim() || '';
+    return panel.classList.contains('action-footer-panel') || headingText === 'Action-Footer';
+  });
+
+  if (!hasActionFooter) {
+    const actionPanel = document.createElement('section');
+    actionPanel.className = 'hud-panel reveal action-footer-panel';
+    actionPanel.innerHTML = `
+      <h2>Action-Footer</h2>
+      <div class="action-footer-links">
+        <a class="button-like" href="index.html">Dashboard</a>
+        <a class="button-like" href="command-hub.html">Command-Hub</a>
+        <a class="button-like" href="missionsboard.html">Einsaetze</a>
+        <a class="button-like" href="dienstplan.html">Dienstplan</a>
+      </div>
+    `;
+    main.appendChild(actionPanel);
+  }
+};
+
+normalizeModuleLayout();
+
 const revealItems = document.querySelectorAll('.reveal');
 
 if (revealItems.length > 0) {
