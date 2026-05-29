@@ -293,70 +293,114 @@ const setupSmartNav = () => {
     return;
   }
 
-  const existingMore = nav.querySelector('.hud-nav-more');
-  if (existingMore) {
-    const panel = existingMore.querySelector('.hud-nav-more-panel');
-    if (panel) {
-      Array.from(panel.querySelectorAll('a[data-page]')).forEach((link) => {
-        nav.insertBefore(link, existingMore);
-      });
-    }
-    existingMore.remove();
-  }
-
   const links = Array.from(nav.querySelectorAll('a[data-page]'));
-  const visibleLinks = links.filter((link) => !link.classList.contains('hidden'));
-  const maxVisible = window.innerWidth < 760 ? 4 : 8;
-
-  if (visibleLinks.length <= maxVisible) {
+  if (links.length === 0) {
     return;
   }
 
-  const overflow = visibleLinks.slice(maxVisible);
-  const more = document.createElement('div');
-  more.className = 'hud-nav-more';
+  const labelByPage = links.reduce((acc, link) => {
+    const page = String(link.dataset.page || '').trim();
+    if (page) {
+      acc[page] = link.textContent?.trim() || page;
+    }
+    return acc;
+  }, {});
 
-  const toggle = document.createElement('button');
-  toggle.type = 'button';
-  toggle.className = 'hud-nav-more-toggle';
-  toggle.setAttribute('aria-expanded', 'false');
-  toggle.textContent = `MEHR +${overflow.length}`;
+  const visibleLinks = links.filter((link) => !link.classList.contains('hidden'));
+  visibleLinks.forEach((link) => {
+    link.classList.remove('is-active');
+    if (String(link.dataset.page || '') === currentPage) {
+      link.classList.add('is-active');
+    }
+  });
 
-  const panel = document.createElement('div');
-  panel.className = 'hud-nav-more-panel';
+  nav.innerHTML = '';
 
-  overflow.forEach((link) => panel.appendChild(link));
+  const primaryOrder = [
+    'index.html',
+    'command-hub.html',
+    'einsatzlage.html',
+    'missionsboard.html',
+    'dienstplan.html',
+    'nachberichte.html',
+    'admin-auth.html',
+  ];
 
-  if (panel.querySelector('a.is-active')) {
-    toggle.classList.add('is-active');
+  const maxPrimary = window.innerWidth < 920 ? 4 : 6;
+  const selected = new Set();
+  const primary = [];
+
+  primaryOrder.forEach((page) => {
+    const match = visibleLinks.find((link) => link.dataset.page === page);
+    if (match && primary.length < maxPrimary) {
+      primary.push(match);
+      selected.add(match);
+    }
+  });
+
+  visibleLinks.forEach((link) => {
+    if (!selected.has(link) && primary.length < maxPrimary) {
+      primary.push(link);
+      selected.add(link);
+    }
+  });
+
+  const secondary = visibleLinks.filter((link) => !selected.has(link));
+
+  const primaryWrap = document.createElement('div');
+  primaryWrap.className = 'hud-nav-primary';
+  primary.forEach((link) => primaryWrap.appendChild(link));
+
+  const toolbar = document.createElement('div');
+  toolbar.className = 'hud-nav-toolbar';
+
+  const breadcrumb = document.createElement('p');
+  breadcrumb.className = 'hud-breadcrumb';
+  const currentLabel = labelByPage[currentPage] || 'Dashboard';
+  breadcrumb.textContent = `NAV / ${currentLabel}`;
+  toolbar.appendChild(breadcrumb);
+
+  if (secondary.length > 0) {
+    const more = document.createElement('div');
+    more.className = 'hud-nav-more';
+
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'hud-nav-more-toggle';
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.textContent = `MODULE +${secondary.length}`;
+
+    const panel = document.createElement('div');
+    panel.className = 'hud-nav-more-panel';
+    secondary.forEach((link) => panel.appendChild(link));
+
+    toggle.addEventListener('click', () => {
+      const nextState = !more.classList.contains('is-open');
+      more.classList.toggle('is-open', nextState);
+      toggle.setAttribute('aria-expanded', nextState ? 'true' : 'false');
+    });
+
+    more.addEventListener('focusout', (event) => {
+      if (!(event.relatedTarget instanceof Node) || !more.contains(event.relatedTarget)) {
+        more.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    more.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && more.classList.contains('is-open')) {
+        more.classList.remove('is-open');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    more.appendChild(toggle);
+    more.appendChild(panel);
+    toolbar.appendChild(more);
   }
 
-  toggle.addEventListener('click', () => {
-    const nextState = !more.classList.contains('is-open');
-    more.classList.toggle('is-open', nextState);
-    toggle.setAttribute('aria-expanded', nextState ? 'true' : 'false');
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!(event.target instanceof Node) || !more.classList.contains('is-open')) {
-      return;
-    }
-    if (!more.contains(event.target)) {
-      more.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && more.classList.contains('is-open')) {
-      more.classList.remove('is-open');
-      toggle.setAttribute('aria-expanded', 'false');
-    }
-  });
-
-  more.appendChild(toggle);
-  more.appendChild(panel);
-  nav.appendChild(more);
+  nav.appendChild(primaryWrap);
+  nav.appendChild(toolbar);
 
   if (!window.__sc36NavResizeBound) {
     window.__sc36NavResizeBound = true;
