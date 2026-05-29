@@ -25,6 +25,11 @@
         <p class="hdr-kicker">Modul 03</p>
         <h1>Einheitsleitung</h1>
         <p class="hdr-sub">Kommandostruktur des 36th Storm Corps</p>
+        <div class="status-strip">
+          <span>CHAIN OF COMMAND: STABIL</span>
+          <span>FUEHRUNGSEBENE: DOPPELT BESETZT</span>
+          <span>REAKTIONSFENSTER: &lt; 120 SEK</span>
+        </div>
       </div>
     </header>
 
@@ -45,27 +50,38 @@
     <main class="hud-shell hud-main">
       <section class="hud-panel reveal">
         <h2>Commanding Officer</h2>
-        <article class="commander-profile">
-          <p class="profile-rank">Senior Commander</p>
-          <h3>CC-2425 „Texer“</h3>
-          <p>
-            Die Leitung des Corps wurde dem Klonoffizier CC-2425 „Texer“ uebertragen. Ausbildungsberichte
-            beschreiben ihn als diszipliniert, taktisch effizient und kompromisslos gegenueber Fehlverhalten.
-          </p>
-          <p>
-            Unter seinem Kommando entstand frueh eine strenge militaerische Struktur, die auf Ordnung,
-            Durchsetzungsfaehigkeit und operative Klarheit ausgerichtet ist.
-          </p>
-        </article>
-        <article class="commander-profile">
-        <h2>Executive Officer</h2>
-          <p class="profile-rank">First Lieutenant</p>
-          <h3>CT-2426 "Master"</h3>
-          <p>
-            Stellvertretende Leitung des Corps mit operativem Fokus auf Einsatzkoordination,
-            Befehlssicherung und unmittelbare Entlastung der Hauptleitung.
-          </p>
-        </article>
+        <div class="leadership-grid">
+          <article class="commander-profile commander-profile-prime">
+            <p class="profile-rank">Senior Commander</p>
+            <h3>CC-2425 „Texer“</h3>
+            <p>
+              Die Leitung des Corps wurde dem Klonoffizier CC-2425 „Texer“ uebertragen. Ausbildungsberichte
+              beschreiben ihn als diszipliniert, taktisch effizient und kompromisslos gegenueber Fehlverhalten.
+            </p>
+            <p>
+              Unter seinem Kommando entstand frueh eine strenge militaerische Struktur, die auf Ordnung,
+              Durchsetzungsfaehigkeit und operative Klarheit ausgerichtet ist.
+            </p>
+            <div class="lead-badge-row" aria-label="Fuehrungsmerkmale Texer">
+              <span>KLARE BEFEHLSLINIEN</span>
+              <span>NULL TOLERANZ BEI BRUECHEN</span>
+              <span>STRIKTE PERFORMANCE-KONTROLLE</span>
+            </div>
+          </article>
+
+          <article class="commander-profile">
+            <p class="profile-rank">Executive Officer</p>
+            <h3>CT-2426 "Master"</h3>
+            <p>
+              Stellvertretende Leitung des Corps mit operativem Fokus auf Einsatzkoordination,
+              Befehlssicherung und unmittelbare Entlastung der Hauptleitung.
+            </p>
+            <p>
+              Verantwortlich fuer die unmittelbare Weitergabe strategischer Anweisungen in die aktive
+              Gefechtskette sowie fuer stabile Uebergaben zwischen Briefing, Einsatz und Debriefing.
+            </p>
+          </article>
+        </div>
       </section>
 
       <section class="hud-panel reveal">
@@ -103,6 +119,28 @@
           <li>Leistung vor Rangprivilegien</li>
           <li>Loyalitaet gegenueber Republik und Bruder-Einheiten</li>
         </ul>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Operationsprotokoll der Leitung</h2>
+        <div class="protocol-grid">
+          <article class="protocol-card">
+            <h3>01 | Auftragseingang</h3>
+            <p>Priorisierung nach Risiko, Reichweite und Truppenbindung innerhalb von zwei Kommandostufen.</p>
+          </article>
+          <article class="protocol-card">
+            <h3>02 | Rollenabgleich</h3>
+            <p>Abgleich zwischen Command, ARF, Technical und Medic zur Vermeidung von Ausfallketten.</p>
+          </article>
+          <article class="protocol-card">
+            <h3>03 | Befehlsausgabe</h3>
+            <p>Eindeutige Befehlsform mit Zeitmarken, Zielsektor und eindeutiger Rueckmeldepflicht.</p>
+          </article>
+          <article class="protocol-card">
+            <h3>04 | Debrief-Sicherung</h3>
+            <p>Nachbereitung innerhalb eines Einsatzfensters zur Optimierung fuer Folgemissionen.</p>
+          </article>
+        </div>
       </section>
     </main>
 
