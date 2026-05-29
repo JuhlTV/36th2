@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>36th Storm Corps | Command-Hub</title>
     <meta name="description" content="Zentrales Command-Hub mit Live-Kennzahlen und Modulzugriffen." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="hud-body" data-page="command-hub.html">
@@ -22,6 +19,7 @@
         <div class="status-strip">
           <span>COMMS: STABIL</span>
           <span>TACTICAL NET: ONLINE</span>
+          <span>RESPONSE WINDOW: &lt; 90 SEC</span>
           <span id="hub-alert">ALERT: MONITORING</span>
         </div>
       </div>
@@ -42,7 +40,42 @@
 
     <main class="hud-shell hud-main">
       <section class="hud-panel reveal">
-        <h2>Live-Kennzahlen</h2>
+        <h2>Intro-Header</h2>
+        <div class="page-intro-grid">
+          <article class="page-intro-copy">
+            <h3>Command Briefing</h3>
+            <p>
+              Der Command-Hub bildet das operative Zentrum fuer Freigaben, Lagebild und Priorisierung.
+              Alle missionskritischen Entscheidungen laufen ueber diese Konsole.
+            </p>
+            <p>
+              Fokus liegt auf schnellen Reaktionsketten, stabilen Kommunikationswegen und synchroner
+              Steuerung zwischen Front, Recon und Support.
+            </p>
+          </article>
+          <div class="page-intro-meta">
+            <article class="page-meta-card">
+              <p class="page-meta-label">Command Tier</p>
+              <p class="page-meta-value">Primary</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Ops Scope</p>
+              <p class="page-meta-value">Sector-Wide</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Net Integrity</p>
+              <p class="page-meta-value">99.2%</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Clock Sync</p>
+              <p class="page-meta-value" id="hub-clock">--:--:--</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>KPI-Row</h2>
         <div class="command-grid">
           <article class="metric-card command-card">
             <p class="metric-label">Aktive Missionen</p>
@@ -65,22 +98,21 @@
             <p class="note" id="hub-note-lastdate">Letzter Eintrag: --</p>
           </article>
         </div>
-        <p class="note">LETZTER COMMS-PING: <span id="hub-clock">--:--:--</span></p>
       </section>
 
       <section class="hud-panel reveal">
-        <h2>Taktische Schnellaktionen</h2>
+        <h2>Main-Section: Taktische Schnellaktionen</h2>
         <div class="module-grid">
-          <article class="module-card"><h3>Missionsboard Ã¶ffnen</h3><p>Neue Operation planen oder aktive Lagen filtern.</p><a class="module-link" href="missionsboard.html">Zu Missionen</a></article>
+          <article class="module-card"><h3>Missionsboard oeffnen</h3><p>Neue Operation planen oder aktive Lagen filtern.</p><a class="module-link" href="missionsboard.html">Zu Missionen</a></article>
           <article class="module-card"><h3>Rekrutenauswertung</h3><p>Bewerbungen erfassen und strukturiert exportieren.</p><a class="module-link" href="rekruten-terminal.html">Zum Terminal</a></article>
-          <article class="module-card"><h3>Training prÃ¼fen</h3><p>Wochenplan und fehlende Fortbildungen nach Rang kontrollieren.</p><a class="module-link" href="dienstplan.html">Zum Dienstplan</a></article>
-          <article class="module-card"><h3>Debrief-Archiv prÃ¼fen</h3><p>Nachberichte filtern und Lessons Learned auswerten.</p><a class="module-link" href="nachberichte.html">Zu Nachberichten</a></article>
-          <article class="module-card"><h3>Auth-Admin Ã¶ffnen</h3><p>Accounts, Rollen und Seitenrechte visuell steuern.</p><a class="module-link" href="admin-auth.html">Zur Admin-Konsole</a></article>
+          <article class="module-card"><h3>Training pruefen</h3><p>Wochenplan und fehlende Fortbildungen nach Rang kontrollieren.</p><a class="module-link" href="dienstplan.html">Zum Dienstplan</a></article>
+          <article class="module-card"><h3>Debrief-Archiv pruefen</h3><p>Nachberichte filtern und Lessons Learned auswerten.</p><a class="module-link" href="nachberichte.html">Zu Nachberichten</a></article>
+          <article class="module-card"><h3>Auth-Admin oeffnen</h3><p>Accounts, Rollen und Seitenrechte visuell steuern.</p><a class="module-link" href="admin-auth.html">Zur Admin-Konsole</a></article>
         </div>
       </section>
 
       <section class="hud-panel reveal">
-        <h2>Operations-Lagekacheln</h2>
+        <h2>Main-Section: Operations-Lagekacheln</h2>
         <div class="tactical-board">
           <article class="tactical-tile">
             <h3>Frontlinie Alpha</h3>
@@ -97,6 +129,16 @@
             <p>3 Entscheidungen offen</p>
             <p>Freigaben fuer Delta/Charlie priorisiert</p>
           </article>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal action-footer-panel">
+        <h2>Action-Footer</h2>
+        <div class="action-footer-links">
+          <a class="button-like" href="missionsboard.html">Mission erstellen</a>
+          <a class="button-like" href="dienstplan.html">Training koordinieren</a>
+          <a class="button-like" href="nachberichte.html">Debrief auswerten</a>
+          <a class="button-like" href="admin-auth.html">Rechte verwalten</a>
         </div>
       </section>
     </main>

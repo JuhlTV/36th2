@@ -8,12 +8,6 @@
       name="description"
       content="Aktuelle Lage und Entwicklung des 36th Storm Corps."
     />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="hud-body" data-page="einsatzlage.html">
@@ -25,6 +19,11 @@
         <p class="hdr-kicker">Modul 04</p>
         <h1>Aktuelle Einsatzlage</h1>
         <p class="hdr-sub">Aufbauphase, Integration und operative Entwicklung</p>
+        <div class="status-strip">
+          <span>LAGEBILD: AKTIV</span>
+          <span>INTEGRATION: LAUFEND</span>
+          <span>RISIKOLEVEL: MITTEL</span>
+        </div>
       </div>
     </header>
 
@@ -44,19 +43,42 @@
 
     <main class="hud-shell hud-main">
       <section class="hud-panel reveal">
-        <h2>Lagebericht</h2>
-        <p>
-          Das 36th Storm Corps befindet sich weiterhin im strukturellen Aufbau. Neue Kloneinheiten werden
-          regelmÃ¤ÃŸig integriert und auf zukÃ¼nftige republikanische Operationen vorbereitet.
-        </p>
-        <p>
-          Die finale Geschichte des Corps ist ungeschrieben und wird durch kommende EinsÃ¤tze, FÃ¼hrungsqualitÃ¤t
-          und den Zusammenhalt innerhalb der Einheit definiert.
-        </p>
+        <h2>Intro-Header</h2>
+        <div class="page-intro-grid">
+          <article class="page-intro-copy">
+            <h3>Lagebericht</h3>
+            <p>
+              Das 36th Storm Corps befindet sich weiterhin im strukturellen Aufbau. Neue Einheiten werden
+              regelmaessig integriert und auf kommende republikanische Operationen vorbereitet.
+            </p>
+            <p>
+              Der Einsatzwert steigt durch disziplinierte Fuehrung, engere Squad-Koordination und
+              klarere Schnittstellen zwischen Command, ARF, Technical und Medic.
+            </p>
+          </article>
+          <div class="page-intro-meta">
+            <article class="page-meta-card">
+              <p class="page-meta-label">Integration</p>
+              <p class="page-meta-value">71%</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Frontdruck</p>
+              <p class="page-meta-value">Moderate</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Command Sync</p>
+              <p class="page-meta-value">Stable</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Forecast</p>
+              <p class="page-meta-value">Uptrend</p>
+            </article>
+          </div>
+        </div>
       </section>
 
       <section class="hud-panel reveal">
-        <h2>Operationsmatrix</h2>
+        <h2>KPI-Row</h2>
         <div class="metric-grid">
           <article class="metric-card">
             <p class="metric-label">Einheiten-Integration</p>
@@ -75,27 +97,55 @@
           </article>
           <article class="metric-card">
             <p class="metric-label">Autonomiegrad im Feld</p>
-            <p class="metric-value">Ãœberdurchschnittlich</p>
+            <p class="metric-value">Ueberdurchschnittlich</p>
             <div class="meter"><span class="meter-fill" data-value="81"></span></div>
           </article>
         </div>
       </section>
 
       <section class="hud-panel reveal">
-        <h2>Zukunftsvektoren</h2>
+        <h2>Main-Section: Zukunftsvektoren</h2>
         <div class="module-grid">
           <article class="module-card">
-            <h3>PrioritÃ¤t Alpha</h3>
-            <p>Vertiefung taktischer Koordination mit grÃ¶ÃŸeren republikanischen VerbÃ¤nden.</p>
+            <h3>Prioritaet Alpha</h3>
+            <p>Vertiefung taktischer Koordination mit groesseren republikanischen Verbaenden.</p>
           </article>
           <article class="module-card">
-            <h3>PrioritÃ¤t Beta</h3>
-            <p>Ausbau der hinterlinienfÃ¤higen Operationsteams fÃ¼r Sabotage und Exfiltration.</p>
+            <h3>Prioritaet Beta</h3>
+            <p>Ausbau hinterlinienfaehiger Operationsteams fuer Sabotage und Exfiltration.</p>
           </article>
           <article class="module-card">
-            <h3>PrioritÃ¤t Gamma</h3>
-            <p>Steigerung der Ãœberlebensrate durch integrierte Medic- und Technical-Protokolle.</p>
+            <h3>Prioritaet Gamma</h3>
+            <p>Steigerung der Ueberlebensrate durch integrierte Medic- und Technical-Protokolle.</p>
           </article>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Main-Section: Risiko- und Chancenbild</h2>
+        <div class="tactical-board">
+          <article class="tactical-tile">
+            <h3>Risiko</h3>
+            <p>Unstete Frontlinien in Randsektoren.</p>
+          </article>
+          <article class="tactical-tile">
+            <h3>Chance</h3>
+            <p>Hohe Lernkurve bei neuen Squads.</p>
+          </article>
+          <article class="tactical-tile">
+            <h3>Hebel</h3>
+            <p>Fruehe Fuhrungsfoerderung und klare SOPs.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal action-footer-panel">
+        <h2>Action-Footer</h2>
+        <div class="action-footer-links">
+          <a class="button-like" href="command-hub.html">Zum Command-Hub</a>
+          <a class="button-like" href="missionsboard.html">Missionen priorisieren</a>
+          <a class="button-like" href="fortbildungssystem.html">Ausbildungslage pruefen</a>
+          <a class="button-like" href="nachberichte.html">Debriefs vergleichen</a>
         </div>
       </section>
     </main>

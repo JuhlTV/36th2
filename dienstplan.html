@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>36th Storm Corps | Dienstplan & Training</title>
     <meta name="description" content="Woechentlicher Dienstplan und Trainingskalender des 36th Storm Corps." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="hud-body" data-page="dienstplan.html">
@@ -19,6 +16,11 @@
         <p class="hdr-kicker">Modul 12</p>
         <h1>Dienstplan + Trainingskalender</h1>
         <p class="hdr-sub">Wochenplan mit Pflicht- und Spezialisierungsslots</p>
+        <div class="status-strip">
+          <span>SLOTS: 06 / WOCHE</span>
+          <span>PFLICHTQUOTE: 3/6</span>
+          <span>TRAININGSPULS: AKTIV</span>
+        </div>
       </div>
     </header>
 
@@ -36,7 +38,68 @@
 
     <main class="hud-shell hud-main">
       <section class="hud-panel reveal">
-        <h2>Wochenslots</h2>
+        <h2>Intro-Header</h2>
+        <div class="page-intro-grid">
+          <article class="page-intro-copy">
+            <h3>Trainingslage</h3>
+            <p>
+              Der Dienstplan steuert Pflichttraining und Spezialisierung ueber die gesamte Woche.
+              Ziel ist ein stabiles Kompetenzniveau in Frontkampf, Teamkoordination und Einsatzkommunikation.
+            </p>
+            <p>
+              Die Module werden taktisch rotiert, um Ausfallrisiken zu senken und den Aufstiegspfad
+              pro Rang kontinuierlich vorzubereiten.
+            </p>
+          </article>
+          <div class="page-intro-meta">
+            <article class="page-meta-card">
+              <p class="page-meta-label">Slots / Woche</p>
+              <p class="page-meta-value">06</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Pflichtmodule</p>
+              <p class="page-meta-value">03</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Spezialmodule</p>
+              <p class="page-meta-value">03</p>
+            </article>
+            <article class="page-meta-card">
+              <p class="page-meta-label">Durchlaufquote</p>
+              <p class="page-meta-value">84%</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>KPI-Row</h2>
+        <div class="metric-grid">
+          <article class="metric-card">
+            <p class="metric-label">Teilnahmequote</p>
+            <p class="metric-value">84%</p>
+            <div class="meter"><span class="meter-fill" data-value="84"></span></div>
+          </article>
+          <article class="metric-card">
+            <p class="metric-label">Pflichttraining erledigt</p>
+            <p class="metric-value">72%</p>
+            <div class="meter"><span class="meter-fill" data-value="72"></span></div>
+          </article>
+          <article class="metric-card">
+            <p class="metric-label">Spezialisierungsfortschritt</p>
+            <p class="metric-value">66%</p>
+            <div class="meter"><span class="meter-fill" data-value="66"></span></div>
+          </article>
+          <article class="metric-card">
+            <p class="metric-label">Ausfallrisiko</p>
+            <p class="metric-value">Niedrig</p>
+            <div class="meter"><span class="meter-fill" data-value="28"></span></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Main-Section: Wochenslots</h2>
         <div class="schedule-grid">
           <article class="metric-card"><p class="metric-label">Montag 20:00</p><p class="metric-value">Pflichttraining: Basisdrill</p></article>
           <article class="metric-card"><p class="metric-label">Dienstag 20:30</p><p class="metric-value">Spezialisierung: ARF Recon</p></article>
@@ -48,7 +111,7 @@
       </section>
 
       <section class="hud-panel reveal">
-        <h2>Fehlende Fortbildungen pro Rang</h2>
+        <h2>Main-Section: Fehlende Fortbildungen pro Rang</h2>
         <label>Rang waehlen
           <select id="rank-training-select">
             <option value="private">Private</option>
@@ -59,6 +122,16 @@
           </select>
         </label>
         <ul id="missing-trainings" class="tag-list"></ul>
+      </section>
+
+      <section class="hud-panel reveal action-footer-panel">
+        <h2>Action-Footer</h2>
+        <div class="action-footer-links">
+          <a class="button-like" href="fortbildungssystem.html">Fortbildungssystem</a>
+          <a class="button-like" href="rangfreischaltung.html">Rangpfad pruefen</a>
+          <a class="button-like" href="command-hub.html">Command-Status</a>
+          <a class="button-like" href="nachberichte.html">Trainingserfolge auswerten</a>
+        </div>
       </section>
     </main>
 
