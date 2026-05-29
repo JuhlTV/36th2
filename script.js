@@ -1,14 +1,139 @@
 const AUTH_STORAGE_KEY = 'sc36.auth.session';
-const AUTH_TTL_MS = 1000 * 60 * 60 * 12;
-const AUTH_USERS = {
-  texer: { password: 'republic36', role: 'Senior Commander' },
-  arflead: { password: 'recon36', role: 'ARF Lead' },
-  technical: { password: 'wrench36', role: 'Technical Lead' },
-  medic: { password: 'medica36', role: 'Medic Lead' },
-};
-
+const AUTH_LOCK_KEY = 'sc36.auth.lock';
+const AUTH_CONFIG_OVERRIDE_KEY = 'sc36.auth.config.override';
 const currentPage = document.body.dataset.page || window.location.pathname.split('/').pop() || 'index.html';
 const isLoginPage = currentPage === 'login.html';
+
+const DEFAULT_AUTH_CONFIG = {
+  logo: '90b2f19b-4dfd-48df-9bec-dfad5390eb02.png',
+  sessionTtlMs: 1000 * 60 * 60 * 12,
+  lockout: {
+    maxAttempts: 5,
+    durationMs: 1000 * 60 * 5,
+  },
+  defaultRedirect: 'index.html',
+  roles: {
+    command: 'Command',
+    arf: 'ARF Lead',
+    technical: 'Technical Lead',
+    medic: 'Medic Lead',
+  },
+  users: [
+    { username: 'texer', password: 'republic36', role: 'command' },
+    { username: 'arflead', password: 'recon36', role: 'arf' },
+    { username: 'technical', password: 'wrench36', role: 'technical' },
+    { username: 'medic', password: 'medica36', role: 'medic' },
+  ],
+  pageAccess: {
+    'admin-auth.html': ['command'],
+    'command-hub.html': ['command'],
+    'auszeichnungen.html': ['command'],
+    'rangfreischaltung.html': ['command'],
+    'nachberichte.html': ['command', 'arf', 'technical', 'medic'],
+    '*': ['command', 'arf', 'technical', 'medic'],
+  },
+};
+
+let AUTH_CONFIG = DEFAULT_AUTH_CONFIG;
+
+const normalizeConfig = (rawConfig = {}) => {
+  const config = {
+    ...DEFAULT_AUTH_CONFIG,
+    ...rawConfig,
+    lockout: { ...DEFAULT_AUTH_CONFIG.lockout, ...(rawConfig.lockout || {}) },
+    roles: { ...DEFAULT_AUTH_CONFIG.roles, ...(rawConfig.roles || {}) },
+    pageAccess: { ...DEFAULT_AUTH_CONFIG.pageAccess, ...(rawConfig.pageAccess || {}) },
+    users: Array.isArray(rawConfig.users) && rawConfig.users.length > 0 ? rawConfig.users : DEFAULT_AUTH_CONFIG.users,
+  };
+
+  const sanitizedUsers = config.users
+    .map((user) => ({
+      username: String(user.username || '').trim().toLowerCase(),
+      password: String(user.password || ''),
+      role: String(user.role || '').trim(),
+    }))
+    .filter((user) => user.username && user.password && user.role);
+
+  const roles = Object.keys(config.roles || {});
+  config.users = sanitizedUsers.filter((user) => roles.includes(user.role));
+
+  const normalizeAccess = (value) => {
+    if (!Array.isArray(value)) {
+      return [];
+    }
+    return value.filter((role) => roles.includes(role));
+  };
+
+  config.pageAccess = Object.entries(config.pageAccess || {}).reduce((acc, [page, allowedRoles]) => {
+    acc[page] = normalizeAccess(allowedRoles);
+    return acc;
+  }, {});
+
+  if (!config.pageAccess['*'] || config.pageAccess['*'].length === 0) {
+    config.pageAccess['*'] = roles;
+  }
+
+  if (!isPageAllowedForConfig(config, 'command', 'admin-auth.html')) {
+    config.pageAccess['admin-auth.html'] = ['command'];
+  }
+
+  if (!roles.includes('command')) {
+    config.roles.command = 'Command';
+    config.pageAccess['*'] = Array.from(new Set([...config.pageAccess['*'], 'command']));
+  }
+
+  if (!roles.includes(config.defaultRedirectRole)) {
+    delete config.defaultRedirectRole;
+  }
+
+  return config;
+};
+
+function isPageAllowedForConfig(config, role, page) {
+  const acl = config.pageAccess || {};
+  const allow = acl[page] || acl['*'] || [];
+  return allow.includes(role);
+}
+
+const getLocalConfigOverride = () => {
+  try {
+    const raw = localStorage.getItem(AUTH_CONFIG_OVERRIDE_KEY);
+    if (!raw) {
+      return null;
+    }
+    return JSON.parse(raw);
+  } catch (_) {
+    return null;
+  }
+};
+
+const loadAuthConfig = async () => {
+  const localOverride = getLocalConfigOverride();
+  if (localOverride) {
+    return normalizeConfig(localOverride);
+  }
+
+  try {
+    const response = await fetch('auth-config.json', { cache: 'no-store' });
+    if (!response.ok) {
+      return DEFAULT_AUTH_CONFIG;
+    }
+    const config = await response.json();
+    return normalizeConfig(config);
+  } catch (_) {
+    return DEFAULT_AUTH_CONFIG;
+  }
+};
+
+const getUserMap = () => {
+  return AUTH_CONFIG.users.reduce((acc, user) => {
+    const key = String(user.username || '').toLowerCase();
+    if (key) {
+      acc[key] = user;
+    }
+    return acc;
+  }, {});
+};
 
 const getAuthSession = () => {
   try {
@@ -17,10 +142,10 @@ const getAuthSession = () => {
       return null;
     }
     const session = JSON.parse(raw);
-    if (!session?.user || !session?.issuedAt) {
+    if (!session?.user || !session?.issuedAt || !session?.role) {
       return null;
     }
-    const expired = Date.now() - Number(session.issuedAt) > AUTH_TTL_MS;
+    const expired = Date.now() - Number(session.issuedAt) > Number(AUTH_CONFIG.sessionTtlMs || DEFAULT_AUTH_CONFIG.sessionTtlMs);
     return expired ? null : session;
   } catch (_) {
     return null;
@@ -42,31 +167,184 @@ const saveAuthSession = (user, role) => {
   );
 };
 
+const getLockState = () => {
+  try {
+    return JSON.parse(localStorage.getItem(AUTH_LOCK_KEY) || '{}');
+  } catch (_) {
+    return {};
+  }
+};
+
+const setLockState = (state) => {
+  localStorage.setItem(AUTH_LOCK_KEY, JSON.stringify(state));
+};
+
+const clearLockState = () => {
+  localStorage.removeItem(AUTH_LOCK_KEY);
+};
+
+const isPageAllowed = (role, page) => {
+  return isPageAllowedForConfig(AUTH_CONFIG, role, page);
+};
+
+const ensureAdminNavLink = () => {
+  const nav = document.querySelector('.hud-nav');
+  if (!nav || nav.querySelector('a[data-page="admin-auth.html"]')) {
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = 'admin-auth.html';
+  link.dataset.page = 'admin-auth.html';
+  link.textContent = 'Admin-Konsole';
+  nav.appendChild(link);
+};
+
+const getRoleHome = (role) => {
+  const preferred = AUTH_CONFIG.defaultRedirect || 'index.html';
+  if (isPageAllowed(role, preferred)) {
+    return preferred;
+  }
+
+  const pageAccess = AUTH_CONFIG.pageAccess || {};
+  const pages = Object.keys(pageAccess).filter((page) => page !== '*');
+  const firstAllowed = pages.find((page) => isPageAllowed(role, page));
+  if (firstAllowed) {
+    return firstAllowed;
+  }
+
+  return 'index.html';
+};
+
+const mountLogo = () => {
+  const logoPath = AUTH_CONFIG.logo || DEFAULT_AUTH_CONFIG.logo;
+  if (!logoPath) {
+    return;
+  }
+
+  const loginPanel = document.querySelector('.login-panel');
+  if (loginPanel && !loginPanel.querySelector('.site-logo-wrap')) {
+    const wrap = document.createElement('div');
+    wrap.className = 'site-logo-wrap';
+    wrap.innerHTML = `<img class="site-logo" src="${logoPath}" alt="36th Storm Corps Logo" />`;
+    loginPanel.prepend(wrap);
+  }
+
+  const headerShell = document.querySelector('.hud-header .hud-shell');
+  if (headerShell && !headerShell.querySelector('.site-logo-inline')) {
+    const emblem = document.createElement('div');
+    emblem.className = 'site-logo-inline';
+    emblem.innerHTML = `<img class="site-logo-mini" src="${logoPath}" alt="36th Storm Corps Logo" />`;
+    headerShell.prepend(emblem);
+  }
+};
+
+const filterNavigationByRole = (role) => {
+  ensureAdminNavLink();
+  document.querySelectorAll('.hud-nav a[data-page]').forEach((link) => {
+    const page = link.dataset.page;
+    const allowed = isPageAllowed(role, page);
+    link.classList.toggle('hidden', !allowed);
+  });
+};
+
 const setupLoginPage = () => {
   const form = document.querySelector('#login-form');
   if (!form) {
     return;
   }
 
+  const userMap = getUserMap();
   const userInput = document.querySelector('#login-user');
   const passInput = document.querySelector('#login-pass');
   const errorEl = document.querySelector('#login-error');
 
+  const storedUser = localStorage.getItem('sc36.auth.lastUser') || '';
+  if (userInput && storedUser) {
+    userInput.value = storedUser;
+  }
+
+  const showError = (code, message) => {
+    if (!errorEl) {
+      return;
+    }
+    errorEl.textContent = `${code}: ${message}`;
+    errorEl.classList.remove('hidden');
+    errorEl.dataset.state = 'error';
+  };
+
+  const clearError = () => {
+    if (!errorEl) {
+      return;
+    }
+    errorEl.classList.add('hidden');
+    errorEl.dataset.state = '';
+  };
+
+  const renderLockState = () => {
+    const lock = getLockState();
+    if (lock.lockedUntil && Date.now() < Number(lock.lockedUntil)) {
+      const remain = Math.ceil((Number(lock.lockedUntil) - Date.now()) / 1000);
+      showError('E-423', `Zugang gesperrt. Erneut in ${remain}s.`);
+      return true;
+    }
+    return false;
+  };
+
+  const lockTimer = setInterval(() => {
+    if (!renderLockState()) {
+      clearInterval(lockTimer);
+      if ((errorEl?.dataset.state || '') !== 'error') {
+        clearError();
+      }
+    }
+  }, 1000);
+
+  renderLockState();
+  window.addEventListener('beforeunload', () => clearInterval(lockTimer), { once: true });
+
+  [userInput, passInput].forEach((input) => {
+    input?.addEventListener('input', () => {
+      clearError();
+    });
+  });
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    const user = userInput?.value?.trim().toLowerCase() || '';
-    const pass = passInput?.value || '';
-    const account = AUTH_USERS[user];
+    const username = userInput?.value?.trim().toLowerCase() || '';
+    const password = passInput?.value || '';
+    const lock = getLockState();
 
-    if (!account || account.password !== pass) {
-      if (errorEl) {
-        errorEl.classList.remove('hidden');
+    if (lock.lockedUntil && Date.now() < Number(lock.lockedUntil)) {
+      const remain = Math.ceil((Number(lock.lockedUntil) - Date.now()) / 1000);
+      showError('E-423', `Zugang gesperrt. Erneut in ${remain}s.`);
+      return;
+    }
+
+    const account = userMap[username];
+    if (!account || account.password !== password) {
+      const attempts = Number(lock.attempts || 0) + 1;
+      const maxAttempts = Number(AUTH_CONFIG.lockout.maxAttempts || 5);
+
+      if (attempts >= maxAttempts) {
+        const lockedUntil = Date.now() + Number(AUTH_CONFIG.lockout.durationMs || DEFAULT_AUTH_CONFIG.lockout.durationMs);
+        setLockState({ attempts: 0, lockedUntil });
+        const remain = Math.ceil((lockedUntil - Date.now()) / 1000);
+        showError('E-423', `Zu viele Fehlversuche. Lockout aktiv (${remain}s).`);
+      } else {
+        setLockState({ attempts, lockedUntil: 0 });
+        showError('E-401', `Ungueltige Zugangsdaten. Verbleibend: ${maxAttempts - attempts}`);
       }
       return;
     }
 
-    saveAuthSession(user, account.role);
-    const next = new URLSearchParams(window.location.search).get('next') || 'command-hub.html';
+    clearLockState();
+    localStorage.setItem('sc36.auth.lastUser', username);
+    saveAuthSession(username, account.role);
+    const next = new URLSearchParams(window.location.search).get('next') || getRoleHome(account.role);
+    if (!isPageAllowed(account.role, next)) {
+      window.location.replace(getRoleHome(account.role));
+      return;
+    }
     window.location.replace(next);
   });
 };
@@ -76,9 +354,12 @@ const mountAuthChip = (session) => {
     return;
   }
 
+  const roleLabel = AUTH_CONFIG.roles?.[session.role] || session.role;
+  const expiresInMs = Number(AUTH_CONFIG.sessionTtlMs || DEFAULT_AUTH_CONFIG.sessionTtlMs) - (Date.now() - Number(session.issuedAt || 0));
+  const expiresHours = Math.max(0, Math.ceil(expiresInMs / (1000 * 60 * 60)));
   const chip = document.createElement('div');
   chip.className = 'auth-chip';
-  chip.innerHTML = `<span class="auth-chip-label">USER: ${session.user.toUpperCase()} | ${session.role}</span>`;
+  chip.innerHTML = `<span class="auth-chip-label">USER: ${session.user.toUpperCase()} | ${roleLabel} | TTL ~${expiresHours}H</span>`;
 
   const btn = document.createElement('button');
   btn.type = 'button';
@@ -92,13 +373,302 @@ const mountAuthChip = (session) => {
   document.body.appendChild(chip);
 };
 
-const enforceAuth = () => {
+const setupAdminConsole = (session) => {
+  const app = document.querySelector('#auth-admin-app');
+  if (!app || !session) {
+    return;
+  }
+
+  const roleContainer = app.querySelector('#admin-roles');
+  const usersContainer = app.querySelector('#admin-users');
+  const pagesContainer = app.querySelector('#admin-pages');
+  const statusEl = app.querySelector('#admin-status');
+  const outputEl = app.querySelector('#admin-config-output');
+  const addRoleBtn = app.querySelector('#admin-add-role');
+  const addUserBtn = app.querySelector('#admin-add-user');
+  const saveBtn = app.querySelector('#admin-save');
+  const resetBtn = app.querySelector('#admin-reset');
+  const downloadBtn = app.querySelector('#admin-download');
+  const lockAttemptsInput = app.querySelector('#admin-lock-attempts');
+  const lockDurationInput = app.querySelector('#admin-lock-duration');
+  const ttlInput = app.querySelector('#admin-session-ttl');
+  const redirectInput = app.querySelector('#admin-default-redirect');
+
+  if (!roleContainer || !usersContainer || !pagesContainer || !statusEl || !outputEl) {
+    return;
+  }
+
+  const state = JSON.parse(JSON.stringify(AUTH_CONFIG));
+
+  const setStatus = (type, text) => {
+    statusEl.textContent = text;
+    statusEl.className = `admin-status ${type}`;
+  };
+
+  const getRoleOptions = (selected = '') => {
+    return Object.keys(state.roles)
+      .map((role) => `<option value="${role}" ${selected === role ? 'selected' : ''}>${state.roles[role]} (${role})</option>`)
+      .join('');
+  };
+
+  const allKnownPages = () => {
+    const navPages = Array.from(document.querySelectorAll('.hud-nav a[data-page]')).map((link) => link.dataset.page);
+    const configPages = Object.keys(state.pageAccess || {});
+    const merged = Array.from(new Set([...navPages, ...configPages, 'admin-auth.html', 'command-hub.html', 'index.html', '*']))
+      .filter(Boolean)
+      .sort((a, b) => a.localeCompare(b));
+    return merged;
+  };
+
+  const syncOutput = () => {
+    outputEl.value = JSON.stringify(state, null, 2);
+  };
+
+  const renderRoles = () => {
+    const entries = Object.entries(state.roles || {});
+    roleContainer.innerHTML = entries
+      .map(
+        ([key, label]) => `
+          <article class="admin-item">
+            <label>Rollen-Key
+              <input data-role-key="${key}" value="${key}" />
+            </label>
+            <label>Rollen-Label
+              <input data-role-label="${key}" value="${label}" />
+            </label>
+            ${key === 'command' ? '<p class="note">Command-Rolle ist geschuetzt.</p>' : `<button type="button" class="admin-remove" data-remove-role="${key}">Rolle entfernen</button>`}
+          </article>
+        `
+      )
+      .join('');
+  };
+
+  const renderUsers = () => {
+    usersContainer.innerHTML = state.users
+      .map(
+        (user, idx) => `
+          <article class="admin-item">
+            <label>Username
+              <input data-user-name="${idx}" value="${user.username}" />
+            </label>
+            <label>Passwort
+              <input data-user-pass="${idx}" value="${user.password}" />
+            </label>
+            <label>Rolle
+              <select data-user-role="${idx}">
+                ${getRoleOptions(user.role)}
+              </select>
+            </label>
+            <button type="button" class="admin-remove" data-remove-user="${idx}">User entfernen</button>
+          </article>
+        `
+      )
+      .join('');
+  };
+
+  const renderPages = () => {
+    const roles = Object.keys(state.roles);
+    pagesContainer.innerHTML = allKnownPages()
+      .map((page) => {
+        const allowed = state.pageAccess[page] || [];
+        const checks = roles
+          .map(
+            (role) => `
+              <label class="admin-check">
+                <input type="checkbox" data-page="${page}" data-role="${role}" ${allowed.includes(role) ? 'checked' : ''} />
+                <span>${state.roles[role]}</span>
+              </label>
+            `
+          )
+          .join('');
+
+        return `
+          <article class="admin-page-row">
+            <p class="admin-page-name">${page}</p>
+            <div class="admin-check-grid">${checks}</div>
+          </article>
+        `;
+      })
+      .join('');
+  };
+
+  const renderAll = () => {
+    ttlInput.value = String(Math.round(Number(state.sessionTtlMs || 0) / 60000));
+    lockAttemptsInput.value = String(state.lockout.maxAttempts || 5);
+    lockDurationInput.value = String(Math.round(Number(state.lockout.durationMs || 0) / 1000));
+    redirectInput.value = state.defaultRedirect || 'index.html';
+    renderRoles();
+    renderUsers();
+    renderPages();
+    syncOutput();
+  };
+
+  const collectStateFromUI = () => {
+    const roleInputs = Array.from(roleContainer.querySelectorAll('[data-role-key]'));
+    const labelInputs = Array.from(roleContainer.querySelectorAll('[data-role-label]'));
+    const roleMap = {};
+
+    roleInputs.forEach((input, idx) => {
+      const key = input.value.trim().toLowerCase();
+      const label = (labelInputs[idx]?.value || '').trim();
+      if (key && label) {
+        roleMap[key] = label;
+      }
+    });
+
+    if (!roleMap.command) {
+      roleMap.command = 'Command';
+    }
+
+    state.roles = roleMap;
+
+    state.users = Array.from(usersContainer.querySelectorAll('.admin-item'))
+      .map((item) => {
+        const username = String(item.querySelector('[data-user-name]')?.value || '').trim().toLowerCase();
+        const password = String(item.querySelector('[data-user-pass]')?.value || '').trim();
+        const role = String(item.querySelector('[data-user-role]')?.value || '').trim();
+        return { username, password, role };
+      })
+      .filter((entry) => entry.username && entry.password && state.roles[entry.role]);
+
+    const pages = allKnownPages();
+    state.pageAccess = {};
+    pages.forEach((page) => {
+      const checkedRoles = Array.from(pagesContainer.querySelectorAll(`input[data-page="${page}"]:checked`)).map(
+        (checkbox) => checkbox.dataset.role
+      );
+      state.pageAccess[page] = checkedRoles;
+    });
+
+    if (!state.pageAccess['*'] || state.pageAccess['*'].length === 0) {
+      state.pageAccess['*'] = Object.keys(state.roles);
+    }
+
+    if (!state.pageAccess['admin-auth.html'] || !state.pageAccess['admin-auth.html'].includes('command')) {
+      state.pageAccess['admin-auth.html'] = ['command'];
+    }
+
+    state.sessionTtlMs = Math.max(15, Number(ttlInput.value || 720)) * 60 * 1000;
+    state.lockout.maxAttempts = Math.max(2, Number(lockAttemptsInput.value || 5));
+    state.lockout.durationMs = Math.max(30, Number(lockDurationInput.value || 300)) * 1000;
+    state.defaultRedirect = redirectInput.value.trim() || 'index.html';
+  };
+
+  addRoleBtn?.addEventListener('click', () => {
+    collectStateFromUI();
+    let i = 1;
+    let key = `role${i}`;
+    while (state.roles[key]) {
+      i += 1;
+      key = `role${i}`;
+    }
+    state.roles[key] = `Neue Rolle ${i}`;
+    renderAll();
+    setStatus('neutral', 'Neue Rolle hinzugefuegt.');
+  });
+
+  addUserBtn?.addEventListener('click', () => {
+    collectStateFromUI();
+    state.users.push({ username: `user${state.users.length + 1}`, password: 'changeme', role: Object.keys(state.roles)[0] });
+    renderAll();
+    setStatus('neutral', 'Neuer User hinzugefuegt.');
+  });
+
+  roleContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const role = target.dataset.removeRole;
+    if (!role) {
+      return;
+    }
+    collectStateFromUI();
+    delete state.roles[role];
+    state.users = state.users.filter((user) => user.role !== role);
+    Object.keys(state.pageAccess).forEach((page) => {
+      state.pageAccess[page] = (state.pageAccess[page] || []).filter((entry) => entry !== role);
+    });
+    renderAll();
+    setStatus('neutral', `Rolle ${role} entfernt.`);
+  });
+
+  usersContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+    const idx = target.dataset.removeUser;
+    if (typeof idx === 'undefined') {
+      return;
+    }
+    collectStateFromUI();
+    state.users.splice(Number(idx), 1);
+    renderAll();
+    setStatus('neutral', 'User entfernt.');
+  });
+
+  saveBtn?.addEventListener('click', () => {
+    collectStateFromUI();
+    const usernames = state.users.map((user) => user.username);
+    const uniqueUsernames = new Set(usernames);
+    if (uniqueUsernames.size !== usernames.length) {
+      setStatus('error', 'Doppelte Usernamen erkannt. Bitte korrigieren.');
+      return;
+    }
+    if (!state.users.some((user) => user.role === 'command')) {
+      setStatus('error', 'Mindestens ein Command-User ist erforderlich.');
+      return;
+    }
+
+    const normalized = normalizeConfig(state);
+    localStorage.setItem(AUTH_CONFIG_OVERRIDE_KEY, JSON.stringify(normalized));
+    AUTH_CONFIG = normalized;
+    Object.assign(state, JSON.parse(JSON.stringify(normalized)));
+    renderAll();
+    setStatus('success', 'Konfiguration lokal gespeichert und sofort aktiv.');
+  });
+
+  resetBtn?.addEventListener('click', async () => {
+    localStorage.removeItem(AUTH_CONFIG_OVERRIDE_KEY);
+    AUTH_CONFIG = await loadAuthConfig();
+    Object.assign(state, JSON.parse(JSON.stringify(AUTH_CONFIG)));
+    renderAll();
+    setStatus('neutral', 'Lokaler Override zurueckgesetzt. Datei-Konfiguration aktiv.');
+  });
+
+  downloadBtn?.addEventListener('click', () => {
+    collectStateFromUI();
+    const normalized = normalizeConfig(state);
+    const blob = new Blob([JSON.stringify(normalized, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'auth-config.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    setStatus('success', 'auth-config.json exportiert.');
+  });
+
+  renderAll();
+  setStatus('neutral', 'Admin-Konsole bereit. Speichern aktiviert die Konfiguration lokal.');
+};
+
+const enforceAuth = async () => {
+  AUTH_CONFIG = await loadAuthConfig();
+  ensureAdminNavLink();
+  mountLogo();
+
   const session = getAuthSession();
 
   if (isLoginPage) {
     if (session) {
-      const next = new URLSearchParams(window.location.search).get('next') || 'command-hub.html';
-      window.location.replace(next);
+      const next = new URLSearchParams(window.location.search).get('next') || getRoleHome(session.role);
+      if (isPageAllowed(session.role, next)) {
+        window.location.replace(next);
+      } else {
+        window.location.replace(getRoleHome(session.role));
+      }
       return null;
     }
     setupLoginPage();
@@ -112,7 +682,14 @@ const enforceAuth = () => {
     return null;
   }
 
+  if (!isPageAllowed(session.role, currentPage)) {
+    window.location.replace(getRoleHome(session.role));
+    return null;
+  }
+
+  filterNavigationByRole(session.role);
   mountAuthChip(session);
+  setupAdminConsole(session);
   return session;
 };
 
@@ -286,6 +863,11 @@ if (recruitForm) {
       recruitOutput.value = output;
       recruitOutput.focus();
       recruitOutput.select();
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(output).catch(() => {
+          // Clipboard access can fail on restrictive browsers; selection remains available.
+        });
+      }
     }
   });
 }
@@ -559,9 +1141,23 @@ const initCommandHubLive = () => {
   };
 
   loadHubMetrics();
+  setInterval(loadHubMetrics, 45000);
 };
 
 initCommandHubLive();
+
+const setupFooterBranding = () => {
+  const footerLabel = document.querySelector('.hud-footer p');
+  if (!footerLabel) {
+    return;
+  }
+
+  const year = new Date().getFullYear();
+  const stamp = ` | Copyright ${year} 36th Storm Corps`;
+  if (!footerLabel.textContent.includes('36th Storm Corps')) {
+    footerLabel.textContent = `${footerLabel.textContent}${stamp}`;
+  }
+};
 
 const setupAmbientMode = () => {
   if (document.querySelector('.ambient-toggle')) {
@@ -682,4 +1278,5 @@ const setupAmbientMode = () => {
   renderState();
 };
 
+setupFooterBranding();
 setupAmbientMode();

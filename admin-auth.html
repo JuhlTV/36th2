@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>36th Storm Corps | Admin-Konsole</title>
+    <meta name="description" content="Visuelle Auth- und Rechteverwaltung fuer das 36th Storm Corps Netzwerk." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800&family=Rajdhani:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="hud-body" data-page="admin-auth.html">
+    <div class="starfield" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+
+    <header class="hud-header" id="top">
+      <div class="hud-shell">
+        <p class="hdr-kicker">Command Security Layer</p>
+        <h1>Auth Admin-Konsole</h1>
+        <p class="hdr-sub">Zentrale Steuerung fuer Rollen, Accounts, Lockout und Seitenfreigaben</p>
+        <div class="status-strip">
+          <span>SECURITY NODE: COMMAND ONLY</span>
+          <span>CONFIG-MODUS: VISUELL</span>
+          <span>PERSISTENZ: LOCAL OVERRIDE + EXPORT</span>
+        </div>
+      </div>
+    </header>
+
+    <nav class="hud-nav">
+      <a href="index.html" data-page="index.html">Dashboard</a>
+      <a href="command-hub.html" data-page="command-hub.html">Command-Hub</a>
+      <a href="missionsboard.html" data-page="missionsboard.html">Einsatz-Planer</a>
+      <a href="nachberichte.html" data-page="nachberichte.html">Nachberichte</a>
+      <a href="admin-auth.html" data-page="admin-auth.html">Admin-Konsole</a>
+    </nav>
+
+    <main class="hud-shell hud-main" id="auth-admin-app">
+      <section class="hud-panel reveal">
+        <h2>Globale Security-Parameter</h2>
+        <div class="filter-row">
+          <label>Session-TTL (Minuten)
+            <input id="admin-session-ttl" type="number" min="15" step="5" />
+          </label>
+          <label>Lockout ab Fehlversuchen
+            <input id="admin-lock-attempts" type="number" min="2" step="1" />
+          </label>
+          <label>Lockout-Dauer (Sekunden)
+            <input id="admin-lock-duration" type="number" min="30" step="15" />
+          </label>
+          <label>Default-Redirect
+            <input id="admin-default-redirect" type="text" placeholder="index.html" />
+          </label>
+        </div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <div class="admin-section-head">
+          <h2>Rollenverwaltung</h2>
+          <button type="button" id="admin-add-role" class="module-link button-like">Rolle hinzufuegen</button>
+        </div>
+        <div id="admin-roles" class="admin-grid"></div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <div class="admin-section-head">
+          <h2>Account-Verwaltung</h2>
+          <button type="button" id="admin-add-user" class="module-link button-like">User hinzufuegen</button>
+        </div>
+        <div id="admin-users" class="admin-grid"></div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <h2>Seitenrechte-Matrix</h2>
+        <p class="note">Fuer jede Seite festlegen, welche Rollen Zugriff erhalten. Die Admin-Seite bleibt Command-exklusiv.</p>
+        <div id="admin-pages" class="admin-pages"></div>
+      </section>
+
+      <section class="hud-panel reveal">
+        <div class="admin-actions">
+          <button type="button" id="admin-save" class="module-link button-like">Konfiguration lokal speichern</button>
+          <button type="button" id="admin-download" class="module-link button-like">auth-config.json exportieren</button>
+          <button type="button" id="admin-reset" class="module-link button-like">Lokalen Override resetten</button>
+        </div>
+        <p id="admin-status" class="admin-status neutral">Initialisiere Konsole...</p>
+        <label>Aktive Konfiguration (Preview)
+          <textarea id="admin-config-output" rows="18" readonly></textarea>
+        </label>
+      </section>
+    </main>
+
+    <footer class="hud-footer">
+      <p>Archiv-ID: GAR/36-SC | Modul Auth-Admin</p>
+      <a href="#top">Nach oben</a>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

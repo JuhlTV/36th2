@@ -26,6 +26,8 @@ cd 36th2
 - `rangfreischaltung.html`: Interaktive Rangfreischaltung
 - `nachberichte.html`: Debrief-Archiv + Template
 - `charakterakten.html`: Charakterakten-System
+- `admin-auth.html`: Visuelle Auth-Admin-Konsole (Accounts, Rollen, Seitenrechte)
+- `auth-config.json`: Zentrale Account-/Rechte-Konfiguration
 - `styles.css`: Globales HUD-Styling
 - `script.js`: Interaktionen, Filter, Audio-Modus, Live-Metriken
 
@@ -75,3 +77,18 @@ Das Projekt nutzt ein Session-basiertes Frontend-Login (LocalStorage, 12h Sessio
 - `medic` / `medica36`
 
 Hinweis: Auf statischem Hosting (GitHub Pages) ist das ein clientseitiger Zugriffsschutz, kein serverseitiges Zero-Trust-System.
+
+## Auth Admin-Konsole
+
+Die Seite `admin-auth.html` ist standardmaessig nur fuer die Rolle `command` freigegeben.
+
+Funktionen:
+- Accounts visuell anlegen/loeschen
+- Rollen und Rollen-Labels verwalten
+- Seitenrechte pro Rolle in einer Matrix steuern
+- Lockout und Session-TTL ohne manuelles JSON-Edit anpassen
+- Konfiguration lokal aktivieren (LocalStorage Override) und als `auth-config.json` exportieren
+
+Hinweis zum Deploy:
+- "Lokal speichern" in der Admin-Seite wirkt sofort im Browser dieses Geraets.
+- Fuer dauerhafte Repo-Aenderungen exportiere `auth-config.json` und committe die Datei ins Repo.

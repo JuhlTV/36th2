@@ -1,0 +1,63 @@
+{
+  "logo": "90b2f19b-4dfd-48df-9bec-dfad5390eb02.png",
+  "sessionTtlMs": 43200000,
+  "lockout": {
+    "maxAttempts": 5,
+    "durationMs": 300000
+  },
+  "defaultRedirect": "index.html",
+  "roles": {
+    "command": "Command",
+    "arf": "ARF Lead",
+    "technical": "Technical Lead",
+    "medic": "Medic Lead"
+  },
+  "users": [
+    {
+      "username": "texer",
+      "password": "republic36",
+      "role": "command"
+    },
+    {
+      "username": "arflead",
+      "password": "recon36",
+      "role": "arf"
+    },
+    {
+      "username": "technical",
+      "password": "wrench36",
+      "role": "technical"
+    },
+    {
+      "username": "medic",
+      "password": "medica36",
+      "role": "medic"
+    }
+  ],
+  "pageAccess": {
+    "admin-auth.html": [
+      "command"
+    ],
+    "command-hub.html": [
+      "command"
+    ],
+    "auszeichnungen.html": [
+      "command"
+    ],
+    "rangfreischaltung.html": [
+      "command"
+    ],
+    "nachberichte.html": [
+      "command",
+      "arf",
+      "technical",
+      "medic"
+    ],
+    "*": [
+      "command",
+      "arf",
+      "technical",
+      "medic"
+    ]
+  }
+}
