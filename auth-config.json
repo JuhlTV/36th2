@@ -1,7 +1,7 @@
 {
   "logo": "90b2f19b-4dfd-48df-9bec-dfad5390eb02.png",
   "authApiEnabled": true,
-  "authApiBase": "https://REPLACE_WITH_YOUR_WORKER_DOMAIN",
+  "authApiBase": "https://auth-api-vercel-cyan.vercel.app",
   "sessionTtlMs": 43200000,
   "lockout": {
     "maxAttempts": 5,

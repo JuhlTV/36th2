@@ -68,11 +68,11 @@ cd 36th2
 ## Login-System (Admin via API)
 
 Die Inhaltsseiten sind oeffentlich lesbar.
-Nur `admin-auth.html` ist geschuetzt und nutzt serverseitige Authentifizierung ueber eine externe Login-API (Cloudflare Worker).
+Nur `admin-auth.html` ist geschuetzt und nutzt serverseitige Authentifizierung ueber eine externe Login-API (Vercel Function).
 
 Konfiguration in `auth-config.json`:
 - `authApiEnabled: true`
-- `authApiBase: https://DEIN-WORKER.workers.dev`
+- `authApiBase: https://DEIN-PROJEKT.vercel.app`
 
 Damit liegen Admin-Zugangsdaten nicht mehr im Frontend.
 
@@ -87,20 +87,21 @@ Funktionen:
 - Konfiguration lokal aktivieren (LocalStorage Override) und als `auth-config.json` exportieren
 
 Hinweis zu Accounts:
-- Bei aktivierter API (`authApiEnabled: true`) erfolgt Account-Verwaltung serverseitig im Worker.
+- Bei aktivierter API (`authApiEnabled: true`) erfolgt Account-Verwaltung serverseitig in der Vercel-API.
 - Die lokale Account-Sektion wird dann ausgeblendet.
 
-## Eigene Login-API (Cloudflare Worker)
+## Eigene Login-API (Vercel Function)
 
-Das Worker-Projekt liegt in `auth-worker/`.
+Das API-Projekt liegt in `auth-api-vercel/`.
 
 Kurzablauf:
-1. `cd auth-worker && npm install`
-2. Secrets setzen (`ADMIN_PASSWORD_HASH`, `AUTH_JWT_SECRET`, `AUTH_PEPPER`)
-3. `npm run deploy`
-4. Worker-URL in `auth-config.json` unter `authApiBase` eintragen
+1. `cd auth-api-vercel`
+2. Vercel-Projekt anlegen oder importieren
+3. Env Vars setzen (`ADMIN_PASSWORD_HASH`, `AUTH_JWT_SECRET`, `AUTH_PEPPER`, `ADMIN_USERNAME`, `ALLOWED_ORIGIN`)
+4. `vercel --prod`
+5. Vercel-URL in `auth-config.json` unter `authApiBase` eintragen
 
-Details siehe `auth-worker/README.md`.
+Details siehe `auth-api-vercel/README.md`.
 
 Hinweis zum Deploy:
 - "Lokal speichern" in der Admin-Seite wirkt sofort im Browser dieses Geraets.
