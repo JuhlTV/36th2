@@ -147,35 +147,69 @@ h1 {
   gap: 0.45rem;
   justify-content: center;
   padding: 0.72rem;
-  background: linear-gradient(90deg, rgba(2, 10, 18, 0.88), rgba(5, 22, 30, 0.78));
+  background:
+    linear-gradient(180deg, rgba(136, 245, 240, 0.08), rgba(136, 245, 240, 0) 36%),
+    linear-gradient(90deg, rgba(2, 10, 18, 0.92), rgba(5, 22, 30, 0.86));
   border-bottom: 1px solid rgba(116, 213, 247, 0.22);
   backdrop-filter: blur(9px);
-  box-shadow: 0 10px 22px rgba(3, 13, 18, 0.38);
+  box-shadow: 0 10px 22px rgba(3, 13, 18, 0.38), inset 0 1px 0 rgba(123, 232, 231, 0.2);
+  isolation: isolate;
+}
+
+.hud-nav::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(123, 232, 231, 0.95), transparent);
+  animation: navSweep 4.2s linear infinite;
+  pointer-events: none;
+}
+
+.hud-nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(111, 231, 229, 0.025),
+    rgba(111, 231, 229, 0.025) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  z-index: -1;
 }
 
 .hud-nav a {
+  position: relative;
   color: var(--text);
   text-decoration: none;
-  border: 1px solid transparent;
-  border-radius: 999px;
-  padding: 0.38rem 0.88rem;
+  border: 1px solid rgba(123, 232, 231, 0.2);
+  border-radius: 8px;
+  padding: 0.45rem 0.9rem;
   font-weight: 700;
   transition: all 220ms ease;
   text-transform: uppercase;
-  letter-spacing: 0.035em;
+  letter-spacing: 0.06em;
+  background: linear-gradient(145deg, rgba(7, 25, 36, 0.82), rgba(10, 34, 46, 0.7));
+  clip-path: polygon(6% 0, 100% 0, 94% 100%, 0 100%);
 }
 
 .hud-nav a:hover,
 .hud-nav a:focus-visible {
-  border-color: var(--line-strong);
+  border-color: rgba(123, 232, 231, 0.82);
   color: var(--accent);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 0 18px rgba(79, 217, 212, 0.25);
 }
 
 .hud-nav a.is-active {
-  border-color: var(--line-strong);
-  color: var(--accent);
-  box-shadow: 0 0 16px rgba(109, 226, 255, 0.2) inset;
+  border-color: rgba(136, 245, 240, 0.95);
+  color: #d5fffd;
+  box-shadow: 0 0 20px rgba(79, 217, 212, 0.26), inset 0 0 18px rgba(79, 217, 212, 0.2);
 }
 
 .hud-nav a:focus-visible,
@@ -1042,6 +1076,15 @@ textarea {
   }
 }
 
+@keyframes navSweep {
+  from {
+    transform: translateX(-22%);
+  }
+  to {
+    transform: translateX(22%);
+  }
+}
+
 @keyframes starDrift {
   from {
     transform: translate3d(0, 0, 0);
@@ -1053,7 +1096,8 @@ textarea {
 
 @media (prefers-reduced-motion: reduce) {
   .flow-line,
-  .data-pulse {
+  .data-pulse,
+  .hud-nav::before {
     animation: none;
   }
 }
