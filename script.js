@@ -1021,9 +1021,43 @@ const normalizeModuleLayout = () => {
 
   setHeading(panels[0], 'Intro-Header');
 
-  const kpiPanel =
+  let kpiPanel =
     panels.find((panel) => panel.querySelector('.metric-grid, .command-grid, .schedule-grid')) ||
     (panels.length > 1 ? panels[1] : null);
+
+  if (!kpiPanel) {
+    const generatedKpiPanel = document.createElement('section');
+    generatedKpiPanel.className = 'hud-panel reveal';
+    generatedKpiPanel.innerHTML = `
+      <h2>KPI-Row</h2>
+      <div class="metric-grid">
+        <article class="metric-card">
+          <p class="metric-label">Module Integrity</p>
+          <p class="metric-value">Stable</p>
+          <div class="meter"><span class="meter-fill" data-value="86"></span></div>
+        </article>
+        <article class="metric-card">
+          <p class="metric-label">Process Sync</p>
+          <p class="metric-value">Aligned</p>
+          <div class="meter"><span class="meter-fill" data-value="79"></span></div>
+        </article>
+        <article class="metric-card">
+          <p class="metric-label">Ops Readiness</p>
+          <p class="metric-value">Operational</p>
+          <div class="meter"><span class="meter-fill" data-value="82"></span></div>
+        </article>
+      </div>
+    `;
+
+    if (panels[0].nextSibling) {
+      main.insertBefore(generatedKpiPanel, panels[0].nextSibling);
+    } else {
+      main.appendChild(generatedKpiPanel);
+    }
+
+    panels.splice(1, 0, generatedKpiPanel);
+    kpiPanel = generatedKpiPanel;
+  }
 
   if (kpiPanel) {
     setHeading(kpiPanel, 'KPI-Row');
